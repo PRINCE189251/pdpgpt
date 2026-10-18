@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Assistant</title>
+<style>
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+:root{--acc:64,156,255;--l:190,230,255;--bg:#02050c;--text:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box;margin:0;padding:0}
+body{height:100%;background:radial-gradient(ellipse at 50% 0,rgba(var(--acc),.25),transparent 60%),var(--bg);color:var(--text);font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;display:flex;justify-content:center;padding:clamp(8px,2vh,20px)}
+.pn{position:relative;width:100%;max-width:720px;display:flex;padding:2px;clip-path:polygon(0 24px,24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%);background:conic-gradient(from var(--ang),rgba(var(--acc),.25) 0 42%,rgb(var(--acc)) 68%,#fff 82%,rgba(var(--acc),.25) 95%);animation:aspin 5s linear infinite;filter:drop-shadow(0 0 18px rgba(var(--acc),.35))}
+@keyframes aspin{to{--ang:360deg}}
+.in{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;clip-path:polygon(0 22px,22px 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%);background:radial-gradient(110% 70% at 10% 0,rgba(var(--acc),.4),transparent 62%),radial-gradient(90% 60% at 100% 100%,rgba(var(--acc),.18),transparent 60%),#050914}
+.hd{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.om{position:relative;width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff,rgb(var(--acc)) 42%,rgba(var(--acc),.3));box-shadow:0 0 18px rgba(var(--acc),.9);animation:opl 2.6s ease-in-out infinite}
+.om::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px dashed rgba(var(--l),.8);animation:ps 8s linear infinite}
+@keyframes opl{50%{transform:scale(.9)}}@keyframes ps{to{transform:rotate(360deg)}}
+body.lis .om{animation-duration:.8s}body.talk .om{animation-duration:.45s}
+.hd b{display:block;font-size:15px;font-weight:800}
+.hd small{font-size:11px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:5px}
+.hd small::before{content:"";width:6px;height:6px;border-radius:50%;background:#2fe8a0;box-shadow:0 0 8px #2fe8a0}
+.hd small.off::before{background:#ffb02e;box-shadow:0 0 8px #ffb02e}
+.hd .sp{flex:1}
+.ib{height:34px;min-width:34px;padding:0 8px;border-radius:17px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;font:700 12px inherit;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:.25s}
+.ib:hover{background:#fff;color:#000}.ib.mute{opacity:.4}
+.ib svg,.cf button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(var(--acc),.5) transparent}
+.m{max-width:86%;padding:10px 14px;font-size:14.5px;line-height:1.55;border-radius:14px;overflow-wrap:anywhere;animation:mr .4s cubic-bezier(.2,.9,.2,1) both}
+.m.b{align-self:flex-start;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);border-bottom-left-radius:4px}
+.m.u{align-self:flex-end;background:linear-gradient(135deg,rgba(var(--acc),.95),rgba(var(--acc),.55));border-bottom-right-radius:4px}
+@keyframes mr{from{opacity:0;transform:translateY(10px) scale(.97)}}
+.ty{display:flex;gap:4px;padding:13px 15px}
+.ty i{width:6px;height:6px;border-radius:50%;background:rgb(var(--l));animation:tb 1s infinite}
+.ty i:nth-child(2){animation-delay:.15s}.ty i:nth-child(3){animation-delay:.3s}
+@keyframes tb{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
+.chips button{padding:7px 12px;border-radius:14px;border:1px solid rgba(var(--l),.4);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:12.5px;cursor:pointer;transition:.25s}
+.chips button:hover{background:rgba(var(--acc),.5)}
+.cf{display:flex;gap:8px;padding:10px 12px 14px;border-top:1px solid rgba(255,255,255,.1)}
+.cf input{flex:1;min-width:0;height:46px;padding:0 16px;border-radius:23px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font:inherit;font-size:15px;outline:none;transition:.25s}
+.cf input::placeholder{color:rgba(255,255,255,.45)}
+.cf input:focus{border-color:rgb(var(--acc));box-shadow:0 0 0 3px rgba(var(--acc),.25)}
+.cf button{width:46px;height:46px;flex:none;border-radius:50%;border:0;background:#fff;color:#050914;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(var(--acc),.6);transition:transform .25s}
+.cf button:hover{transform:scale(1.1)}.cf button:disabled{opacity:.5}
+.cf #mic{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:none}
+.cf #mic.on{background:rgb(var(--acc));border-color:#fff;animation:mp 1s ease-out infinite}
+@keyframes mp{0%{box-shadow:0 0 0 0 rgba(var(--acc),.8)}100%{box-shadow:0 0 0 16px rgba(var(--acc),0)}}
+@media (prefers-reduced-motion:reduce){.pn,.om,.om::after{animation:none}}
+</style>
+</head>
+<body>
+<div class="pn"><div class="in">
+ <div class="hd"><i class="om"></i><div><b>AI Assistant</b><small id="st">Online · ask me anything</small></div><span class="sp"></span>
+  <button class="ib" id="vo" title="Voice replies on/off" aria-label="Voice replies"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg></button>
+  <button class="ib" id="lg" title="Speech language">EN</button>
+  <button class="ib" id="clr" title="New chat" aria-label="New chat"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8M3 3v5h5"/></svg></button>
+ </div>
+ <div class="msgs" id="msgs"></div>
+ <div class="chips" id="chips"><button>Tell me a joke</button><button>Fun fact</button><button>Mujhe kuch sikhao</button><button>Explain AI simply</button></div>
+ <form class="cf" id="cf"><input id="ci" placeholder="Type your question…" autocomplete="off">
+  <button type="button" id="mic" aria-label="Speak" title="Tap and speak"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
+  <button type="submit" id="cs" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+</div></div>
+<script>
+const $=s=>document.querySelector(s);
+const msgs=$('#msgs'),ci=$('#ci'),chips=$('#chips'),st=$('#st'),mic=$('#mic'),vo=$('#vo'),lgB=$('#lg');
+
+/* ===== SETTINGS ===== */
+const API_KEY='';                    // optional: apni Anthropic API key yahan paste karo (behtar answers). Khali = free service
+const MODEL='claude-haiku-5-5';
+const BOT_NAME='AI Assistant',SPEAK=true,RATE=1;
+
+let hist=[],busy=false,voiceOn=SPEAK,handsFree=false,vlang='en-IN',listening=false,rec=null,fin='';
+const syn=window.speechSynthesis,SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+function add(role,text){const m=document.createElement('div');m.className='m '+role;role==='b'?m.innerHTML=fmt(text):m.textContent=text;msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;return m}
+function typing(){const m=document.createElement('div');m.className='m b ty';m.innerHTML='<i></i><i></i><i></i>';msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;return m}
+function greet(){msgs.innerHTML='';hist=[];chips.style.display='';add('b','Hi! 👋 I’m your AI assistant. Ask me anything: general questions, ideas, homework, coding, or just chat. Hindi, English ya Hinglish, jo chaaho.')}
+
+const SYS=()=>`You are "${BOT_NAME}", a friendly AI assistant. Answer any question helpfully and accurately. Keep replies short (2-4 sentences) unless the user asks for detail. Reply in the same language the user uses (English, Hindi, Hinglish, etc). Use plain text, **bold** sparingly, no headings or tables. If unsure, say so honestly. Current date and time: ${new Date().toLocaleString('en-IN',{dateStyle:'full',timeStyle:'short'})}.`;
+
+/* voice */
+vo.onclick=()=>{voiceOn=!voiceOn;vo.classList.toggle('mute',!voiceOn);if(!voiceOn&&syn)syn.cancel()};
+lgB.onclick=()=>{vlang=vlang==='en-IN'?'hi-IN':'en-IN';lgB.textContent=vlang==='en-IN'?'EN':'हि';if(listening&&rec){fin='';rec.abort()}};
+function stopTalk(){if(syn)syn.cancel();document.body.classList.remove('talk')}
+function speak(text){
+ if(!syn||!voiceOn||!text)return;stopTalk();
+ const clean=text.replace(/[*_`#]/g,'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu,'').trim();if(!clean)return;
+ const lang=/[\u0900-\u097F]/.test(clean)?'hi-IN':'en-IN',vs=syn.getVoices(),
+  v=vs.find(x=>x.lang.replace('_','-')===lang)||vs.find(x=>x.lang.toLowerCase().indexOf(lang.slice(0,2))===0);
+ const parts=clean.match(/[^.!?।\n]+[.!?।]?/g)||[clean];
+ parts.forEach((t,i)=>{const u=new SpeechSynthesisUtterance(t.trim());u.lang=lang;if(v)u.voice=v;u.rate=RATE;
+  if(i===0)u.onstart=()=>document.body.classList.add('talk');
+  if(i===parts.length-1)u.onend=u.onerror=()=>{document.body.classList.remove('talk');if(handsFree&&!busy)listen()};
+  syn.speak(u)})}
+function micMsg(t){add('b',t);handsFree=false}
+function listen(){
+ if(!SR){micMsg('Voice input isn’t supported in this browser. Please use Chrome or Edge.');return}
+ if(listening){handsFree=false;rec.stop();return}
+ stopTalk();fin='';rec=new SR();rec.lang=vlang;rec.interimResults=true;rec.continuous=false;
+ rec.onstart=()=>{listening=true;mic.classList.add('on');document.body.classList.add('lis');ci.placeholder='Listening…'};
+ rec.onresult=e=>{let t='';for(const r of e.results)t+=r[0].transcript;ci.value=t;fin=t};
+ rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')micMsg('Microphone access is blocked. Please allow the microphone in your browser settings.');else if(e.error==='network')micMsg('Voice recognition needs an internet connection.');else handsFree=false};
+ rec.onend=()=>{listening=false;mic.classList.remove('on');document.body.classList.remove('lis');ci.placeholder='Type your question…';if(fin.trim())send(fin);else handsFree=false};
+ try{rec.start()}catch(e){}}
+mic.onclick=()=>{handsFree=true;listen()};
+if(syn&&syn.getVoices)syn.getVoices();
+
+/* chat */
+async function ask(onTok){
+ while(hist.length&&hist[0].role!=='user')hist.shift();
+ const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000),key=!!API_KEY;
+ const r=key
+  ?await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:500,stream:true,system:SYS(),messages:hist})})
+  :await fetch('https://text.pollinations.ai/openai',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json'},body:JSON.stringify({model:'openai',stream:true,messages:[{role:'system',content:SYS()},...hist]})});
+ clearTimeout(to);
+ if(!r.ok){let m=r.status;try{const j=await r.json();m=(j.error&&j.error.message)||m}catch(e){}throw new Error(m)}
+ if(!r.body||/json/.test(r.headers.get('content-type')||'')){
+  const j=await r.json(),t=key?j.content.map(c=>c.text||'').join(''):j.choices[0].message.content;
+  if(!t)throw new Error('empty');onTok(t);return t.trim()}
+ const rd=r.body.getReader(),dec=new TextDecoder();let buf='',full='';
+ for(;;){
+  const {done,value}=await rd.read();if(done)break;
+  buf+=dec.decode(value,{stream:true});
+  const ln=buf.split('\n');buf=ln.pop();
+  for(const l of ln){
+   if(l.indexOf('data:')!==0)continue;
+   const d=l.slice(5).trim();if(!d||d==='[DONE]')continue;
+   try{
+    const j=JSON.parse(d);
+    const t=key?(j.type==='content_block_delta'&&j.delta&&j.delta.text):(j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content);
+    if(t){full+=t;onTok(full)}
+   }catch(e){}
+  }
+ }
+ if(!full.trim())throw new Error('empty');
+ return full.trim();
+}
+
+async function send(q){
+ q=q.trim();if(!q||busy)return;
+ busy=true;$('#cs').disabled=true;ci.value='';chips.style.display='none';
+ add('u',q);hist.push({role:'user',content:q});
+ const ty=typing();let bub=null,got='',a='',ok=true;
+ try{
+  a=await ask(t=>{got=t;if(!bub){ty.remove();bub=add('b','')}bub.innerHTML=fmt(t);msgs.scrollTop=msgs.scrollHeight});
+ }catch(e){
+  if(got)a=got;
+  else{ok=false;hist.pop();a='Sorry, AI service se connect nahi ho pa raha. Internet check karo aur dobara try karo.'}
+ }
+ ty.remove();
+ if(ok)hist.push({role:'assistant',content:a});
+ if(hist.length>14)hist.splice(0,hist.length-14);
+ if(bub)bub.innerHTML=fmt(a);else add('b',a);
+ if(ok)speak(a);
+ st.textContent=ok?'Online · ask me anything':'Error · try again';st.classList.toggle('off',!ok);
+ busy=false;$('#cs').disabled=false;ci.focus();
+}
+
+$('#cf').onsubmit=e=>{e.preventDefault();handsFree=false;if(listening){fin='';rec.abort()}stopTalk();send(ci.value)};
+chips.querySelectorAll('button').forEach(b=>b.onclick=()=>send(b.textContent));
+$('#clr').onclick=()=>{handsFree=false;stopTalk();greet()};
+greet();
+</script>
+</body>
+</html>
